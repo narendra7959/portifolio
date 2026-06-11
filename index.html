@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- ============================================================
+  HOW TO PERSONALIZE (search for "TODO"):
+  1. Replace "YOUR NAME" (appears 3 times)
+  2. Replace your.email@example.com
+  3. Replace the # in the LinkedIn / GitHub links with your URLs
+  Then deploy: drag this file's folder into Netlify, or push to
+  GitHub and enable Pages. Done — public URL.
+============================================================ -->
+<title>YOUR NAME — Data Science &amp; Computer Vision</title>
+<meta name="description" content="Portfolio of a data scientist specializing in deep learning and computer vision — medical imaging, biometrics, and real-time detection systems." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0E14;
+    --surface:#11151F;
+    --surface-2:#161B28;
+    --line:rgba(148,166,205,.14);
+    --line-strong:rgba(148,166,205,.28);
+    --text:#E9EDF5;
+    --muted:#98A2B8;
+    --faint:#6B7488;
+    --ir-magenta:#FF2E92;
+    --ir-orange:#FF5C39;
+    --ir-amber:#FFC53D;
+    --thermal:linear-gradient(92deg,var(--ir-magenta) 0%,var(--ir-orange) 52%,var(--ir-amber) 100%);
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+    --display:'Space Grotesk',sans-serif;
+    --body:'Inter',sans-serif;
+    --maxw:1080px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--body);
+    font-size:16px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ir-orange);color:#0B0E14}
+  a{color:inherit;text-decoration:none}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--ir-amber);outline-offset:3px;border-radius:2px}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+  /* ---------- nav ---------- */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    backdrop-filter:blur(12px);
+    background:rgba(11,14,20,.72);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{max-width:var(--maxw);margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .logo{font-family:var(--mono);font-size:13px;color:var(--muted);letter-spacing:.04em}
+  .logo b{color:var(--text);font-weight:500}
+  .logo .cursor{display:inline-block;width:7px;height:14px;background:var(--ir-orange);vertical-align:-2px;margin-left:3px;animation:blink 1.1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .nav-links{display:flex;gap:26px;font-family:var(--mono);font-size:12.5px;letter-spacing:.05em}
+  .nav-links a{color:var(--muted);transition:color .2s}
+  .nav-links a:hover{color:var(--ir-amber)}
+  @media(max-width:680px){.nav-links{display:none}}
+
+  /* ---------- hero ---------- */
+  header{
+    position:relative;
+    min-height:92vh;
+    display:flex;align-items:center;
+    overflow:hidden;
+    background:
+      radial-gradient(900px 480px at 78% 18%,rgba(255,46,146,.07),transparent 65%),
+      radial-gradient(700px 420px at 18% 85%,rgba(255,92,57,.06),transparent 65%);
+  }
+  .grid-bg{
+    position:absolute;inset:0;pointer-events:none;
+    background-image:
+      linear-gradient(var(--line) 1px,transparent 1px),
+      linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:72px 72px;
+    mask-image:radial-gradient(ellipse 80% 70% at 50% 40%,black 30%,transparent 75%);
+  }
+  .hero-inner{position:relative;width:100%;padding:140px 0 90px}
+  .eyebrow{
+    font-family:var(--mono);font-size:13px;color:var(--ir-amber);
+    letter-spacing:.14em;text-transform:uppercase;margin-bottom:28px;
+  }
+  .eyebrow::before{content:"// "}
+
+  /* the detection-box signature */
+  .bbox{
+    position:relative;display:inline-block;
+    padding:26px 38px 30px;
+    border:1px solid var(--line-strong);
+  }
+  .bbox .tick{position:absolute;width:18px;height:18px;border:2px solid var(--ir-orange)}
+  .bbox .tick.tl{top:-2px;left:-2px;border-right:0;border-bottom:0}
+  .bbox .tick.tr{top:-2px;right:-2px;border-left:0;border-bottom:0}
+  .bbox .tick.bl{bottom:-2px;left:-2px;border-right:0;border-top:0}
+  .bbox .tick.br{bottom:-2px;right:-2px;border-left:0;border-top:0}
+  .bbox .tag{
+    position:absolute;top:-13px;left:18px;
+    font-family:var(--mono);font-size:12px;letter-spacing:.04em;
+    background:var(--ir-orange);color:#10070A;
+    padding:3px 10px;font-weight:500;
+  }
+  h1{
+    font-family:var(--display);
+    font-size:clamp(44px,8.4vw,96px);
+    font-weight:700;line-height:1.02;letter-spacing:-.02em;
+  }
+  h1 .thermal{
+    background:var(--thermal);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero-sub{
+    margin-top:34px;max-width:620px;
+    color:var(--muted);font-size:17.5px;
+  }
+  .hero-sub strong{color:var(--text);font-weight:600}
+  .hero-cta{margin-top:38px;display:flex;gap:14px;flex-wrap:wrap}
+  .btn{
+    font-family:var(--mono);font-size:13.5px;letter-spacing:.04em;
+    padding:13px 24px;border:1px solid var(--line-strong);
+    transition:border-color .2s,background .2s,transform .2s;
+    display:inline-block;
+  }
+  .btn:hover{border-color:var(--ir-orange);transform:translateY(-1px)}
+  .btn.primary{background:var(--thermal);color:#13070C;border:none;font-weight:500}
+  .btn.primary:hover{filter:brightness(1.08)}
+
+  /* metric readout strip */
+  .readout{
+    margin-top:72px;
+    display:grid;grid-template-columns:repeat(4,1fr);
+    border:1px solid var(--line);
+  }
+  .readout > div{padding:20px 22px;border-right:1px solid var(--line)}
+  .readout > div:last-child{border-right:0}
+  .readout .num{font-family:var(--display);font-size:clamp(22px,3vw,32px);font-weight:600}
+  .readout .num span{color:var(--ir-amber)}
+  .readout .lbl{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.08em;text-transform:uppercase;margin-top:5px}
+  @media(max-width:760px){
+    .readout{grid-template-columns:repeat(2,1fr)}
+    .readout > div:nth-child(2){border-right:0}
+    .readout > div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  }
+
+  /* ---------- sections ---------- */
+  section{padding:96px 0;border-top:1px solid var(--line)}
+  .sec-head{display:flex;align-items:baseline;gap:18px;margin-bottom:52px;flex-wrap:wrap}
+  .sec-head h2{font-family:var(--display);font-size:clamp(26px,4vw,38px);font-weight:600;letter-spacing:-.01em}
+  .sec-head .path{font-family:var(--mono);font-size:12.5px;color:var(--faint);letter-spacing:.05em}
+
+  /* about */
+  .about-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:56px}
+  .about-grid p{color:var(--muted);font-size:17px;margin-bottom:18px}
+  .about-grid p strong{color:var(--text);font-weight:600}
+  .focus-list{border:1px solid var(--line);background:var(--surface)}
+  .focus-list h3{font-family:var(--mono);font-size:12px;color:var(--ir-amber);letter-spacing:.1em;text-transform:uppercase;padding:16px 20px;border-bottom:1px solid var(--line)}
+  .focus-list ul{list-style:none}
+  .focus-list li{padding:13px 20px;border-bottom:1px solid var(--line);font-size:14.5px;color:var(--muted);display:flex;gap:12px;align-items:center}
+  .focus-list li:last-child{border-bottom:0}
+  .focus-list li::before{content:"";width:7px;height:7px;background:var(--thermal);flex-shrink:0}
+  @media(max-width:760px){.about-grid{grid-template-columns:1fr}}
+
+  /* experience */
+  .xp{border:1px solid var(--line);background:var(--surface);padding:34px 36px}
+  .xp-top{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:8px}
+  .xp h3{font-family:var(--display);font-size:22px;font-weight:600}
+  .xp .org{color:var(--ir-amber);font-weight:500;font-size:15.5px;margin-bottom:18px}
+  .xp .date{font-family:var(--mono);font-size:12.5px;color:var(--faint);letter-spacing:.05em;white-space:nowrap;padding-top:6px}
+  .xp ul{list-style:none}
+  .xp li{position:relative;padding-left:24px;color:var(--muted);font-size:15.5px;margin-bottom:11px}
+  .xp li::before{content:"▸";position:absolute;left:0;color:var(--ir-orange)}
+  .xp li b{color:var(--text);font-weight:600}
+
+  /* projects */
+  .proj-grid{display:grid;gap:26px}
+  .proj{
+    position:relative;border:1px solid var(--line);background:var(--surface);
+    padding:34px 36px;transition:border-color .25s,transform .25s;
+  }
+  .proj:hover{border-color:var(--line-strong);transform:translateY(-3px)}
+  .proj::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;
+    background:var(--thermal);opacity:0;transition:opacity .25s;
+  }
+  .proj:hover::before{opacity:1}
+  .proj-meta{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+  .proj-meta .id{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.06em}
+  .proj-meta .date{font-family:var(--mono);font-size:12px;color:var(--faint)}
+  .proj h3{font-family:var(--display);font-size:24px;font-weight:600;margin-bottom:14px}
+  .proj p{color:var(--muted);font-size:15.5px;margin-bottom:16px;max-width:74ch}
+  .stack{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+  .chip{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.03em;
+    border:1px solid var(--line-strong);color:var(--muted);
+    padding:4px 11px;border-radius:99px;
+  }
+  .proj .results{display:flex;gap:28px;flex-wrap:wrap;border-top:1px dashed var(--line-strong);padding-top:16px}
+  .proj .results div{font-family:var(--mono);font-size:12.5px;color:var(--faint)}
+  .proj .results b{display:block;font-family:var(--display);font-size:21px;color:var(--text);font-weight:600;margin-bottom:2px}
+  .proj .results b em{font-style:normal;background:var(--thermal);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+  /* skills */
+  .skill-cols{display:grid;grid-template-columns:repeat(2,1fr);gap:26px}
+  .skill-box{border:1px solid var(--line);background:var(--surface);padding:26px 28px}
+  .skill-box h3{font-family:var(--mono);font-size:12px;color:var(--ir-amber);letter-spacing:.1em;text-transform:uppercase;margin-bottom:18px}
+  .skill-box .tags{display:flex;gap:9px;flex-wrap:wrap}
+  .tag{
+    font-size:13.5px;color:var(--muted);
+    border:1px solid var(--line-strong);padding:7px 14px;border-radius:99px;
+    transition:color .2s,border-color .2s;
+  }
+  .tag:hover{color:var(--text);border-color:var(--ir-orange)}
+  @media(max-width:680px){.skill-cols{grid-template-columns:1fr}}
+
+  /* education + certs */
+  .edu-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+  .edu{border:1px solid var(--line);background:var(--surface);padding:28px 30px}
+  .edu .date{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.05em;margin-bottom:10px}
+  .edu h3{font-family:var(--display);font-size:19px;font-weight:600;margin-bottom:6px}
+  .edu .inst{color:var(--muted);font-size:14.5px}
+  .edu .gpa{font-family:var(--mono);font-size:12.5px;color:var(--ir-amber);margin-top:12px}
+  @media(max-width:680px){.edu-grid{grid-template-columns:1fr}}
+  .certs{margin-top:26px;border:1px solid var(--line);background:var(--surface)}
+  .certs li{list-style:none;padding:15px 28px;border-bottom:1px solid var(--line);color:var(--muted);font-size:14.5px;display:flex;gap:14px;align-items:baseline}
+  .certs li:last-child{border-bottom:0}
+  .certs li .src{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin-left:auto;white-space:nowrap}
+  .certs li::before{content:"✓";color:var(--ir-amber);font-weight:600}
+
+  /* contact */
+  .contact{text-align:center;padding:120px 0 100px}
+  .contact .eyebrow{margin-bottom:18px}
+  .contact h2{font-family:var(--display);font-size:clamp(32px,6vw,56px);font-weight:700;letter-spacing:-.02em;margin-bottom:20px}
+  .contact h2 span{background:var(--thermal);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .contact p{color:var(--muted);max-width:520px;margin:0 auto 36px;font-size:16.5px}
+  .contact .links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+  footer{border-top:1px solid var(--line);padding:26px 0;text-align:center}
+  footer p{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.04em}
+
+  /* reveal animation */
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .reveal{opacity:1;transform:none;transition:none}
+    .logo .cursor{animation:none}
+    .proj:hover,.btn:hover{transform:none}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <!-- TODO: replace with your name -->
+    <a class="logo" href="#top"><b>Sai Narendra</b> · Data Scientist</a>
+    <div class="nav-links">
+      <a href="#about">about</a>
+      <a href="#experience">experience</a>
+      <a href="#work">work</a>
+      <a href="#skills">skills</a>
+      <a href="#contact">contact</a>
+    </div>
+  </div>
+</nav>
+
+<header id="top">
+  <div class="grid-bg"></div>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">ai × healthcare · llms · computer vision</p>
+    <div class="bbox reveal">
+      <span class="tick tl"></span><span class="tick tr"></span>
+      <span class="tick bl"></span><span class="tick br"></span>
+      <span class="tag">data_scientist&nbsp;&nbsp;conf: 0.99</span>
+      <!-- TODO: replace with your name -->
+      <h1>Sai Narendra<br><span class="thermal">sees in infrared.</span></h1>
+    </div>
+    <p class="hero-sub reveal">
+      Data Scientist at <strong>Saince</strong>, building AI for healthcare — <strong>clinical documentation intelligence with medical LLMs</strong>,
+      real-time medical speech-to-text, and vision systems that run live on edge hardware.
+    </p>
+    <div class="hero-cta reveal">
+      <a class="btn primary" href="#work">View selected work →</a>
+      <a class="btn" href="#contact">Get in touch</a>
+    </div>
+
+    <div class="readout reveal">
+      <div><div class="num">97.95<span>%</span></div><div class="lbl">mAP@50 · vein detection</div></div>
+      <div><div class="num">99.87<span>%</span></div><div class="lbl">AUC · cattle verification</div></div>
+      <div><div class="num">3<span>+</span></div><div class="lbl">medical LLMs in production · saince</div></div>
+      <div><div class="num">1<span>×</span></div><div class="lbl">research internship · IIT Hyderabad</div></div>
+    </div>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>About</h2><span class="path">~/about/readme.md</span></div>
+    <div class="about-grid">
+      <div class="reveal">
+        <p>I'm a Data Scientist at <strong>Saince</strong>, working at the intersection of <strong>AI and healthcare</strong>. My work centers on the Doc-U-Scribe platform — AI-powered Clinical Documentation Integrity that improves documentation quality, physician efficiency, and clinical workflows.</p>
+        <p>Day to day, that means <strong>medical LLMs and speech models in production</strong>: MedGemma for CDI query generation and clinical reasoning, PsychFound for behavioral-health summarization, and MedASR for real-time medical transcription at the point of care.</p>
+        <p>Before that: deep learning and computer vision research — including a real-time infrared medical imaging pipeline deployed on a Raspberry Pi during my internship at IIT Hyderabad. I care about models that hold up in the real world, not just on leaderboards.</p>
+      </div>
+      <div class="focus-list reveal">
+        <h3>Current focus</h3>
+        <ul>
+          <li>Clinical Documentation Integrity (CDI) with LLMs</li>
+          <li>Medical LLMs — MedGemma, PsychFound</li>
+          <li>Real-time medical ASR (MedASR)</li>
+          <li>Prompt engineering &amp; clinical reasoning</li>
+          <li>Real-time detection &amp; segmentation (YOLO family)</li>
+          <li>Edge deployment — OpenCV, Raspberry Pi</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Experience</h2><span class="path">~/experience/</span></div>
+
+    <div class="xp reveal" style="margin-bottom:26px">
+      <div class="xp-top">
+        <h3>Data Scientist</h3>
+        <!-- TODO: add your start month/year -->
+        <span class="date">2026 — PRESENT</span>
+      </div>
+      <p class="org">Saince · Doc-U-Scribe platform — AI × Healthcare</p>
+      <ul>
+        <li>Building <b>AI-powered Clinical Documentation Integrity (CDI)</b> solutions within the Doc-U-Scribe platform — improving healthcare documentation quality, physician efficiency, and clinical workflows.</li>
+        <li>Integrating <b>MedGemma</b> for intelligent CDI query generation, clinical reasoning, and prompt engineering, supporting accurate and context-aware medical documentation.</li>
+        <li>Exploring and evaluating <b>PsychFound</b> for psychiatric and behavioral health documentation, leveraging domain-specific LLMs for clinical summarization and provider assistance.</li>
+        <li>Integrating <b>MedASR</b> for real-time transcription of medical audio queries — accurate live medical speech-to-text that streamlines documentation at the point of care.</li>
+      </ul>
+      <div class="stack" style="margin-top:18px">
+        <span class="chip">MedGemma</span><span class="chip">PsychFound</span><span class="chip">MedASR</span><span class="chip">LLMs</span><span class="chip">Prompt engineering</span><span class="chip">Clinical NLP</span>
+      </div>
+    </div>
+
+    <div class="xp reveal">
+      <div class="xp-top">
+        <h3>Research Intern</h3>
+        <span class="date">MAY 2025 — JUN 2025</span>
+      </div>
+      <p class="org">IIT Hyderabad</p>
+      <ul>
+        <li>Designed and deployed a <b>YOLOv11-based real-time jugular vein detection &amp; segmentation system</b> using infrared medical imaging for non-invasive cardiovascular monitoring.</li>
+        <li>Created and annotated a <b>custom infrared jugular vein dataset</b>, applying preprocessing and augmentation to improve model stability and generalization.</li>
+        <li>Integrated the pipeline with <b>OpenCV and a Raspberry Pi infrared camera</b> for live point-of-care vein visualization from real-time video streams.</li>
+        <li>Achieved <b>97.95 mAP@50 and 90.48% mAP@50–95</b> — reliable, clinical-grade detection performance.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="work">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Selected work</h2><span class="path">~/projects/ · 3 entries</span></div>
+    <div class="proj-grid">
+
+      <article class="proj reveal">
+        <div class="proj-meta">
+          <span class="id">PRJ—01 / biometrics</span>
+          <span class="date">JUL 2025 — APR 2026</span>
+        </div>
+        <h3>Multi-modal cattle verification</h3>
+        <p>A two-stage verification framework combining <b>facial and muzzle biometrics</b> for robust livestock identification. YOLO-based muzzle detection feeds a ViT-Base backbone that extracts discriminative embeddings from both modalities, fused through a custom <b>cross-attention refinement module</b>. Trained with Multi-Similarity Loss and hard sample mining — outperforming existing methods.</p>
+        <div class="stack">
+          <span class="chip">YOLO</span><span class="chip">ViT-Base</span><span class="chip">Cross-attention</span><span class="chip">Multi-Similarity Loss</span><span class="chip">PyTorch</span>
+        </div>
+        <div class="results">
+          <div><b><em>98.67%</em></b>verification accuracy</div>
+          <div><b><em>99.87%</em></b>AUC</div>
+          <div><b>2-stage</b>face + muzzle fusion</div>
+        </div>
+      </article>
+
+      <article class="proj reveal">
+        <div class="proj-meta">
+          <span class="id">PRJ—02 / medical imaging</span>
+          <span class="date">MAY 2025 — JUN 2025</span>
+        </div>
+        <h3>Infrared jugular vein detection — live on edge</h3>
+        <p>Real-time detection and segmentation of the jugular vein from <b>infrared video</b>, for non-invasive cardiovascular monitoring at the point of care. Built end-to-end: custom dataset creation and annotation, augmentation strategy, YOLOv11 training, and deployment to a <b>Raspberry Pi with an IR camera</b> via OpenCV.</p>
+        <div class="stack">
+          <span class="chip">YOLOv11</span><span class="chip">OpenCV</span><span class="chip">Raspberry Pi</span><span class="chip">Infrared imaging</span><span class="chip">Custom dataset</span>
+        </div>
+        <div class="results">
+          <div><b><em>97.95</em></b>mAP@50</div>
+          <div><b><em>90.48%</em></b>mAP@50–95</div>
+          <div><b>Real-time</b>live video inference</div>
+        </div>
+      </article>
+
+      <article class="proj reveal">
+        <div class="proj-meta">
+          <span class="id">PRJ—03 / affective computing</span>
+          <span class="date">JAN 2024 — MAY 2024</span>
+        </div>
+        <h3>Generalizable facial expression recognition</h3>
+        <p>Optimized a deep learning framework for <b>micro-expression recognition</b> that holds up on datasets it has never seen. Introduced feature masking, channel separation, and advanced loss functions to sharpen expression-specific feature learning and reduce dataset bias.</p>
+        <div class="stack">
+          <span class="chip">CNNs</span><span class="chip">Feature masking</span><span class="chip">Domain generalization</span><span class="chip">PyTorch</span>
+        </div>
+        <div class="results">
+          <div><b>Cross-dataset</b>generalization focus</div>
+          <div><b>Bias-robust</b>against domain shift</div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Skills</h2><span class="path">~/skills/ · 4 groups</span></div>
+    <div class="skill-cols">
+      <div class="skill-box reveal">
+        <h3>Languages &amp; data</h3>
+        <div class="tags">
+          <span class="tag">Python</span><span class="tag">R</span><span class="tag">SQL</span><span class="tag">Excel</span><span class="tag">MySQL</span><span class="tag">PostgreSQL</span>
+        </div>
+      </div>
+      <div class="skill-box reveal">
+        <h3>Data science</h3>
+        <div class="tags">
+          <span class="tag">Machine Learning</span><span class="tag">Deep Learning</span><span class="tag">Computer Vision</span><span class="tag">NLP</span><span class="tag">LLMs</span><span class="tag">Prompt Engineering</span><span class="tag">Speech-to-Text (ASR)</span><span class="tag">Clinical AI / CDI</span><span class="tag">Statistical Analysis</span>
+        </div>
+      </div>
+      <div class="skill-box reveal">
+        <h3>Frameworks &amp; tooling</h3>
+        <div class="tags">
+          <span class="tag">PyTorch</span><span class="tag">Pandas</span><span class="tag">NumPy</span><span class="tag">Matplotlib</span><span class="tag">Django</span><span class="tag">Docker</span><span class="tag">MLflow</span><span class="tag">Git</span><span class="tag">OpenCV</span>
+        </div>
+      </div>
+      <div class="skill-box reveal">
+        <h3>Ways of working</h3>
+        <div class="tags">
+          <span class="tag">Problem solving</span><span class="tag">Collaboration</span><span class="tag">Adaptability</span><span class="tag">Attention to detail</span><span class="tag">Analytical thinking</span>
+        </div>
+      </div>
+      <div class="skill-box reveal">
+        <h3>Languages</h3>
+        <div class="tags">
+          <span class="tag">English</span><span class="tag">Telugu</span><span class="tag">Hindi</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="education">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Education &amp; certifications</h2><span class="path">~/education/</span></div>
+    <div class="edu-grid">
+      <div class="edu reveal">
+        <div class="date">JUN 2024 — APR 2026</div>
+        <h3>M.Sc. Data Science &amp; Computing</h3>
+        <p class="inst">Sri Sathya Sai Institute of Higher Learning</p>
+        <p class="gpa">CGPA 7.8</p>
+      </div>
+      <div class="edu reveal">
+        <div class="date">JUN 2021 — MAY 2024</div>
+        <h3>B.Sc. Computer Science</h3>
+        <p class="inst">Sri Sathya Sai Institute of Higher Learning</p>
+        <p class="gpa">CGPA 7.0</p>
+      </div>
+    </div>
+    <ul class="certs reveal">
+      <li>Machine Learning, Deep Learning, Python Bootcamp <span class="src">Udemy</span></li>
+      <li>Python · Computer Vision <span class="src">Kaggle</span></li>
+      <li>CNNs · Deep Learning with PyTorch: Image Segmentation, Grad-CAM <span class="src">Coursera</span></li>
+      <li>IAI ACET-Qualified (Mar 2024) · AWS Academy Graduate (Jul 2025) <span class="src">IAI / AWS</span></li>
+    </ul>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <div class="wrap">
+    <p class="eyebrow reveal">open to collaborations &amp; conversations</p>
+    <h2 class="reveal">Let's build something<br><span>worth detecting.</span></h2>
+    <p class="reveal">Based in Hyderabad, India — currently building healthcare AI at Saince. If you're working on clinical AI, LLMs, vision, or anything that turns messy data into decisions, my inbox is open.</p>
+    <div class="links reveal">
+      <!-- TODO: paste your work email, personal email, LinkedIn URL, and GitHub URL below -->
+      <a class="btn primary" href="mailto:sainarendra.g@saince.in">work.email@example.com</a>
+      <a class="btn" href="mailto:sainarendra0409@gmail.com">personal.email@example.com</a>
+      <a class="btn" href="https://www.linkedin.com/in/YOUR-LINKEDIN" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a class="btn" href="https://github.com/YOUR-GITHUB" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <!-- TODO: replace with your name -->
+  <p>© 2026 Sai Narendra · designed &amp; built with care</p>
+</footer>
+
+<script>
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
